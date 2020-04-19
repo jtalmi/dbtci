@@ -31,7 +31,7 @@ class DBTIntegrationTest(unittest.TestCase):
         ) as f:
             f.write("""SELECT 1 AS my_integer_col""")
         self.dbt_ci_manager.execute_changed("run", check_macros=False, children=False)
-        self.test(["test_model"])
+        self.dbt_ci_manager.test(["test_model"])
         os.remove("models/test_model.sql")
 
     def test_run_changed_models_with_children(self):
