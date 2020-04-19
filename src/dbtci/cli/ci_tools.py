@@ -41,10 +41,10 @@ def run_changed(check_macros, children, full_refresh, test, debug):
         )
     os.chdir(project_root)
     dbt_manager = DbtCIManager(
-        #profile="dbtci_integration_tests",
+        # profile="dbtci_integration_tests",
         profile="snaptravel-snowflake",
-        #target="dbtci_integration_tests",
-        target='dev',
+        # target="dbtci_integration_tests",
+        target="dev",
         project_root=project_root,
     )
     click.secho("Starting run...", blink=True)

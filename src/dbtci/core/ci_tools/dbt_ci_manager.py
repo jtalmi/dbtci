@@ -37,7 +37,7 @@ class DbtCIManager(DbtHook):
             self.changed_objects = fetch_changed_dbt_objects()
         models = self.changed_objects.get("model")
         if models:
-          click.echo("Changed models: {}".format(" ".join(models)))
+            click.echo("Changed models: {}".format(" ".join(models)))
 
         if check_macros:
             macros = self.changed_objects.get("macros")
@@ -52,7 +52,7 @@ class DbtCIManager(DbtHook):
             if action == "test" or test:
                 self.test(models=models, debug=debug)
         else:
-          click.secho('Nothing to do.')
+            click.secho("Nothing to do.")
 
     def _parse_manifest(self, resource_type, *args):
         if resource_type == "model":

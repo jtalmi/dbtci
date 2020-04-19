@@ -10,9 +10,9 @@ class DBTIntegrationTest(unittest.TestCase):
 
     def setUp(self):
         self.dbt_ci_manager = DbtCIManager(
-            #profile="snaptravel-snowflake",
-            #target='dev',
-            #project_root='/Users/jonathantalmi/dev/db-analytics',
+            # profile="snaptravel-snowflake",
+            # target='dev',
+            # project_root='/Users/jonathantalmi/dev/db-analytics',
             profile="integration_tests",
             target="test",
             project_root="tests/integration/",
