@@ -42,7 +42,7 @@ class DBTIntegrationTest(unittest.TestCase):
         with open(model_path, "w+") as f:
             f.write("""SELECT 1 AS my_integer_col""")
         with open(child_model_path, "w+") as f:
-            f.write("""SELECT * FROM {{ ref('test_model' }}""")
+            f.write("""SELECT * FROM {{ ref('test_model') }}""")
         self.mock_changed_objects.return_value = {"model": ["test_model"]}
         self.dbt_ci_manager.execute_changed("run", check_macros=False, children=True)
         self.dbt_ci_manager.test(["test_model", "test_child_model"])
