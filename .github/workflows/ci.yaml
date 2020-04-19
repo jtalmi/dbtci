@@ -30,7 +30,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         mkdir -p ~/.dbt
-        cp tests/integration/ci/sample.profiles.yml ~/.dbt/profiles.yml
 
     - name: Lint with flake8
       run: |
@@ -41,6 +40,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
+        cp tests/integration/ci/sample_profiles.yml ~/.dbt/profiles.yml
         pip install pytest
         pytest
 
