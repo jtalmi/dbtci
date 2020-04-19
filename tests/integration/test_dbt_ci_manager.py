@@ -1,49 +1,7 @@
-'''
-Integration tests:
-
-1. Run changed
-- changed models run.
-- changed models + macro children run 
-- changed models + children run
-- changed models run + are tested
-
-2. Test changed
-- test changed models 
-
-
-
-
-'''
-
 import unittest
-from dbt.adapters.factory import get_adapter
-from dbt.config import RuntimeConfig
-from dbt.main import handle_and_check
-import sys
 import os
-import yaml
 import mock 
-from dbtci.core.ci_tools.dbt_hook import DbtHook
-import shutil
-
-IS_DOCKER = os.environ.get("AM_I_IN_A_DOCKER_CONTAINER", False)
-
-CHANGED_OBJECTS_TEMPLATE = {
-  'model': [],
-  'data_test': [],
-  'seed': [],
-  'macro': []
-  }
-
-class TestArgs(object):
-    def __init__(self, kwargs):
-        self.which = "run"
-        self.single_threaded = False
-        self.profiles_dir = os.getcwd()
-        self.__dict__.update(kwargs)
-
-
-
+from dbtci.core.ci_tools.dbt_ci_manager import DbtCIManager
 
 class DBTIntegrationTest(unittest.TestCase):
   def __init__(self, *args, **kwargs):

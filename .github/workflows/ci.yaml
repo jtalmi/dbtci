@@ -39,10 +39,15 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
+      env:
+        CI_DBT_USER: root
+        CI_DBT_PASS: ''
+        CI_DBT_PORT: 5432
+        CI_DBT_DBNAME: dbtci_test
       run: |
+        mkdir ~/.dbt
         cp tests/integration/ci/sample_profiles.yml ~/.dbt/profiles.yml
-        pip install pytest
-        pytest
+        pytest tests/integration
 
 
 

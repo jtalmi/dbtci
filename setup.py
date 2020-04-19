@@ -20,6 +20,7 @@ dev_requires = [
     #'coverage==4.5.4',
     'pytest==4.3.1',
     'pytest-cov==2.6.1',
+    'mock==4.0.2'
 ]
 
 setup(
