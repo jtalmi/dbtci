@@ -15,9 +15,12 @@ class DBTIntegrationTest(unittest.TestCase):
             project_root="tests/integration/",
         )
         self.mock_changed_objects = mock.patch(
-            "dbtci.core.ci_tools.utls.git_utils.fetch_changed_dbt_objects"
+            "dbtci.core.ci_tools.utils.git_utils.fetch_changed_dbt_objects"
         ).start()
         self.mock_changed_objects.return_value = {"model": ["test_model"]}
+
+    def tearDown(self):
+        mock.patch.stopall()
 
     def test_run_changed_models(self):
         with open("models/test_model.sql", "w") as f:
@@ -31,7 +34,7 @@ class DBTIntegrationTest(unittest.TestCase):
             f.write("""SELECT 1 AS my_integer_col""")
         with open("models/test_model_child.sql", "w") as f:
             f.write("""SELECT * FROM {{ ref('test_model' }}""")
-        self.mock_changed_models.return_value = {"model": ["test_model"]}
+        self.mock_changed_objects.return_value = {"model": ["test_model"]}
         self.execute_changed("run", check_macros=False, children=True)
         self.test(["test_model", "test_model_child"])
         os.remove("models/test_model.sql")
