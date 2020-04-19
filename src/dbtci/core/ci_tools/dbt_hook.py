@@ -149,8 +149,11 @@ class DbtHook:
             ).strip()
         if debug:
             return command
-        return_code = subprocess.call(command.split(), cwd=self.project_root)
-        return return_code
+        click.secho(f"Executing: {command}")
+        return_code = subprocess.call(command, cwd=self.project_root, shell=True)
+        if return_code != 0:
+            raise Exception(f"DBT command {command} failed")
+        return command
 
     def run(
         self,
