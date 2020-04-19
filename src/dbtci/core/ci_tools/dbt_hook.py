@@ -6,17 +6,15 @@ import logging
 from typing import List, Dict
 from dbtci.core.ci_tools.utils.utils import *
 from dbt.config import PROFILES_DIR
-from dbtci.core.ci_tools.utils.utils
 
 
 COMPILED_DIR = "compiled"
 RUN_DIR = "run"
 MANIFEST_FILE = "manifest.json"
 DEFAULT_OPEN_COMMAND = "open"
-COMPILATION_MESSAGE = "You may need to run dbt compile first."
 
-BASE_COMMAND = 'dbt --partial_parsing {action} --profile {profile} --target {target} --profiles-dir {profiles_dir} --threads {threads} {options}'
-DBT_LIST_COMMAND = 'dbt --partial_parsing ls --output json --resource-type {resource_type} {options}'
+BASE_COMMAND = 'dbt {action} --profile {profile} --target {target} --profiles-dir {profiles_dir} --threads {threads} {options}'
+DBT_LIST_COMMAND = 'dbt ls > /dev/null'
 
 RESOURCE_TYPES = [
   'model',
@@ -43,36 +41,40 @@ class DbtHook:
                  profile,
                  target,
                  project_root,
-                 profiles_dir=PROFILES_DIR, 
-                 threads=1):
+                 profiles_dir=PROFILES_DIR):
       self.profile = profile
       self.target = target
       self.project_root = project_root or find_project_root()
       self.target_path = os.path.join(self.project_root, 'target')
       self.profiles_dir = profiles_dir 
-      self.threads = threads
       self.manifest_path = os.path.join(self.target_path, 'manifest.json')
-      self.manifest = self._get_manifest()
+      self.manifest = None
 
-    def _get_manifest(self):
+    def _generate_manifest(self):
+      command = ['dbt', 'ls', '>', '/dev/null']
+      subprocess.call(command, cwd=self.local_path)
+      click.secho('Fresh manifest.json created',)
       try:
         with open(self.manifest_path) as f:
           manifest = json.load(f)
         return manifest
       except IOError:
-        raise Exception(f"Could not find manifest file. {COMPILATION_MESSAGE}")
+        raise Exception(f"Could not find manifest file.")
 
-    def model_manifest(self, list_of_models: List=[], exclude_tags: List=[]):
+    def fetch_model_data(self, list_of_models: List=[], exclude_tags: List=[]):
+      if not self.manifest:
+        self.manifest = self.generate_manifest()
+        
       model_dicts = {}
 
-      for k, v in manifest['nodes'].items():
+      for k, v in self.manifest['nodes'].items():
         model = get_resource_name(k)
         if v['resource_type'] == 'model':
           model_dicts[model] = {}
           model_dicts[model]['tags'] = v['tags']
           model_dicts[model]['columns'] = v['columns']
           model_dicts[model]['description'] = v['description']
-          model_dicts[model]['tests'] = [test for test in manifest['child_map'][k] if test.startswith('test')]
+          model_dicts[model]['tests'] = [test for test in self.manifest['child_map'][k] if test.startswith('test')]
       
       if list_of_models:
         model_dicts = {k: v for k, v in model_dicts.items() if k in list_of_models}
@@ -82,8 +84,11 @@ class DbtHook:
 
       return model_dicts
 
-    def macro_manifest(self, list_of_macros: List=[], exclude_tags: List=[]):
-      macro_dicts = {get_resource_name(k): v for k, v in manifest.get('macros').items()}
+    def fetch_macro_data(self, list_of_macros: List=[], exclude_tags: List=[]):
+      if not self.manifest:
+        self.manifest = self.generate_manifest()
+
+      macro_dicts = {get_resource_name(k): v for k, v in self.manifest.get('macros').items()}
 
       if list_of_macros:
         macro_dicts = {k: v for k, v in macro_dicts.items() if k in list_of_macros}
@@ -94,6 +99,9 @@ class DbtHook:
       return macro_dicts
 
     def _macro_child_map(self):
+      if not self.manifest:
+        self.manifest = self.generate_manifest()
+
       macro_child_map = {}
       for resource, val in self.manifest.get('nodes').items():
         resource_type= val.get('resource_type')
@@ -141,21 +149,13 @@ class DbtHook:
         command.split(),
         cwd=self.local_path
       )
-      #self.shell = shell
-      #import pdb; pdb.set_trace()
-      #line = ''
-      #for line in iter(shell.stdout.readline, b''):
-      #  logging.info(line)
-
-      #import pdb; pdb.set_trace()
-
-      #shell.wait()
-      #if shell.returncode:
-      #  raise Exception("dbt command failed")
 
     def run(self, models: List=None, excludes: List=None, vars: List=None, full_refresh: bool=False, debug: bool=False):
       self._execute(action='run', options=self._build_options(models, excludes, vars, full_refresh), debug=debug)
 
     def test(self, models: List=None, excludes: List=None, vars: List=None, debug: bool=False):
+      self._execute(action='test', options=self._build_options(models, excludes, vars), debug=debug)
+
+    def drop(self, models: List=None, excludes: List=None, vars: List=None, debug: bool=False):
       self._execute(action='test', options=self._build_options(models, excludes, vars), debug=debug)
 

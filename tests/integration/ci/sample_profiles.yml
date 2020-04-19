@@ -1,0 +1,17 @@
+config:
+    send_anonymous_usage_stats: False
+    use_colors: True
+
+dbtci_integration_tests:
+  target: postgres
+  outputs:
+    postgres:
+      type: postgres
+      host: localhost
+      user: "{{ env_var('CI_DBT_USER') }}"
+      pass: "{{ env_var('CI_DBT_PASS') }}"
+      port: "{{ env_var('CI_DBT_PORT') }}"
+      dbname: "{{ env_var('CI_DBT_DBNAME') }}"
+      schema: dbtci_integration_tests
+      threads: 1
+

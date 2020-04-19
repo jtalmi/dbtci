@@ -29,7 +29,7 @@ DEFAULT_REQUIRED_YML = ['description', 'columns']
 @click.option("--full-refresh", help="Fully refresh models on run", is_flag=True)
 @click.option("--test", help="Test changed models after run", is_flag=True)
 @click.option("--debug", help="Print commands only", is_flag=True)
-def run_changed(macros, children, full_refresh, test, debug):
+def run_changed(check_macros, children, full_refresh, test, debug):
   project_root = find_project_root()
   if not project_root:
     raise Exception(
@@ -37,16 +37,19 @@ def run_changed(macros, children, full_refresh, test, debug):
         "Missing dbt_project.yml file"
     )
   os.chdir(project_root)  
-  dbt_manager = DbtCIManager()
+  dbt_manager = DbtCIManager(
+    profile='dbtci_integration_tests',
+    target='dbtci_integration_tests',
+    project_root=project_root)
   click.secho('Starting run...', blink=True)
-  dbt_manager.execute_changed('run', macros, children, full_refresh, test, debug)
+  dbt_manager.execute_changed('run', check_macros, children, full_refresh, test, debug)
   click.secho('Finished run.')
 
 @cli.command()
 @click.option("--macros", help="Run and/or test models using changed macros", is_flag=True)
 @click.option("--children", help="Run and/or test model children", is_flag=True)
 @click.option("--debug", help="Print commands only", is_flag=True)
-def test_changed(macros, children, debug):
+def test_changed(check_macros, children, debug):
   project_root = find_project_root()
   if not project_root:
     raise Exception(
@@ -56,7 +59,7 @@ def test_changed(macros, children, debug):
   os.chdir(project_root)
   dbt_manager = DbtCIManager()
   click.secho('Starting test...',fg='green', blink=True)
-  dbt_manager.execute_changed('test', macros, children, debug)
+  dbt_manager.execute_changed('test', check_macros, children, debug)
   click.secho('Finished test.', fg='green')
 
 @cli.command()

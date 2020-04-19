@@ -30,12 +30,15 @@ class DbtCIManager(DbtHook):
                **kwargs):
     super(DbtCIManager, self).__init__(*args, **kwargs)
     self.compare_branch = compare_branch
-    self.changed_objects = fetch_changed_dbt_objects()
+    import pdb; pdb.set_trace()
+    self.changed_objects = None
 
-  def execute_changed(self, action, macro_children=False, children=False, full_refresh=False, test=False, debug=False):
+  def execute_changed(self, action, check_macros=False, children=False, full_refresh=False, test=False, debug=False):
+    if not self.changed_objects:
+      self.changed_objects = fetch_changed_dbt_objects()   
     models = self.changed_objects.get('model')
     logging.info('Changed models: %s', " ".join(models))
-    if macro_children:
+    if check_macros:
       models += self._find_macro_children()
     if children:
       models = [f'{model}+' for model in models]
@@ -46,9 +49,9 @@ class DbtCIManager(DbtHook):
 
   def _parse_manifest(self, resource_type, *args):
     if resource_type == 'model':
-      return self.model_manifest(*args)
+      return self.fetch_model_data(*args)
     elif resource_type == 'macro':
-      return self.macro_manifest(*args)
+      return self.fetch_macro_data(*args)
     else:
       raise Exception('Unsupported resource type: %s' % resource_type)
   
@@ -70,6 +73,8 @@ class DbtCIManager(DbtHook):
 
   def lint(self, resource_type, lint_func, changed_only=True, exclude_tags=['skip-lint'], **kwargs):
     if changed_only:
+      if not self.changed_objects:
+        self.changed_objects = fetch_changed_dbt_objects()
       resources = self.changed_objects.get(resource_type)
     if not resources:
       return []
