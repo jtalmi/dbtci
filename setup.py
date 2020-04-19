@@ -10,8 +10,8 @@ with open("VERSION") as version_file:
 requires = ["click==7.0", "click-default-group==1.2.1", "dbt==0.16.0"]
 
 dev_requires = [
-    'black==19.10b0',
-    'coverage==4.5.4',
+    "black==19.10b0",
+    "coverage==4.5.4",
     "pytest==4.3.1",
     "pytest-cov==2.6.1",
     "mock==4.0.2",
