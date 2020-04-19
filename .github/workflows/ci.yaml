@@ -29,7 +29,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        mkdir -p ~/.dbt
 
     - name: Lint with flake8
       run: |
@@ -45,7 +44,7 @@ jobs:
         CI_DBT_PORT: 5432
         CI_DBT_DBNAME: dbtci_test
       run: |
-        mkdir ~/.dbt
+        mkdir -p ~/.dbt
         cp tests/integration/ci/sample_profiles.yml ~/.dbt/profiles.yml
         pytest tests/integration
 
