@@ -30,7 +30,6 @@ class DbtCIManager(DbtHook):
                **kwargs):
     super(DbtCIManager, self).__init__(*args, **kwargs)
     self.compare_branch = compare_branch
-    import pdb; pdb.set_trace()
     self.changed_objects = None
 
   def execute_changed(self, action, check_macros=False, children=False, full_refresh=False, test=False, debug=False):
