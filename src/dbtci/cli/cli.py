@@ -16,8 +16,9 @@ LEVELS = {
     "critical": logging.CRITICAL,
 }
 
-MANDATORY_SCHEMA_TESTS = ['unique', 'not_null']
-MANDATORY_FIELDS = ['description', 'columns']
+MANDATORY_SCHEMA_TESTS = ["unique", "not_null"]
+MANDATORY_FIELDS = ["description", "columns"]
+
 
 @click.group(invoke_without_command=True, no_args_is_help=True)
 @click.option("--log-level", type=click.Choice(LEVELS.keys()), default="info")
