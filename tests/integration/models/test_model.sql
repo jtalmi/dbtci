@@ -1,0 +1,1 @@
+SELECT 1 AS my_integer_col

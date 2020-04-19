@@ -1,8 +1,8 @@
 import os
 import sys
+import click
 import subprocess
 import json
-import logging
 from typing import List, Dict
 from dbtci.core.ci_tools.utils.utils import *
 from dbt.config import PROFILES_DIR
@@ -13,7 +13,7 @@ RUN_DIR = "run"
 MANIFEST_FILE = "manifest.json"
 DEFAULT_OPEN_COMMAND = "open"
 
-BASE_COMMAND = "dbt {action} --profile {profile} --target {target} --profiles-dir {profiles_dir} --threads {threads} {options}"
+BASE_COMMAND = "dbt {action} --profile {profile} --target {target} --profiles-dir {profiles_dir} {options}"
 DBT_LIST_COMMAND = "dbt ls > /dev/null"
 
 RESOURCE_TYPES = ["model", "test", "seed", "snapshot", "source", "analysis"]
@@ -41,8 +41,7 @@ class DbtHook:
         self.manifest = None
 
     def _generate_manifest(self):
-        subprocess.call(DBT_LIST_COMMAND.split(), cwd=self.local_path)
-        click.secho("Fresh manifest.json created",)
+        subprocess.call(DBT_LIST_COMMAND, cwd=self.project_root, shell=True)
         try:
             with open(self.manifest_path) as f:
                 manifest = json.load(f)
@@ -52,7 +51,7 @@ class DbtHook:
 
     def fetch_model_data(self, list_of_models: List = [], exclude_tags: List = []):
         if not self.manifest:
-            self.manifest = self.generate_manifest()
+            self.manifest = self._generate_manifest()
 
         model_dicts = {}
 
@@ -83,7 +82,7 @@ class DbtHook:
 
     def fetch_macro_data(self, list_of_macros: List = [], exclude_tags: List = []):
         if not self.manifest:
-            self.manifest = self.generate_manifest()
+            self.manifest = self._generate_manifest()
 
         macro_dicts = {
             get_resource_name(k): v for k, v in self.manifest.get("macros").items()
@@ -103,7 +102,7 @@ class DbtHook:
 
     def _macro_child_map(self):
         if not self.manifest:
-            self.manifest = self.generate_manifest()
+            self.manifest = self._generate_manifest()
 
         macro_child_map = {}
         for resource, val in self.manifest.get("nodes").items():
@@ -114,12 +113,9 @@ class DbtHook:
                     macro_child_map[macro][resouce_type].append(model)
         return macro_child_map
 
-    def _find_macro_children(self):
-        changed_macros = self.changed_objects.get("macros")
-        if not changed_macros:
-            raise Exception("No changed macros in commit")
+    def _find_macro_children(self, changed_macros):
         remaining_models = set()
-        macro_map = self.macro_child_map(self.project_dict)
+        macro_map = self._macro_child_map()
         for macro in changed_macros:
             remaining_models.update(macro_map.get(macro).get("models"))
         return remaining_models
@@ -149,12 +145,12 @@ class DbtHook:
                 profile=self.profile,
                 target=self.target,
                 profiles_dir=self.profiles_dir,
-                threads=self.threads,
                 options=options,
             ).strip()
         if debug:
             return command
-        shell = subprocess.call(command.split(), cwd=self.local_path)
+        return_code = subprocess.call(command.split(), cwd=self.project_root)
+        return return_code
 
     def run(
         self,
@@ -171,19 +167,6 @@ class DbtHook:
         )
 
     def test(
-        self,
-        models: List = None,
-        excludes: List = None,
-        vars: List = None,
-        debug: bool = False,
-    ):
-        self._execute(
-            action="test",
-            options=self._build_options(models, excludes, vars),
-            debug=debug,
-        )
-
-    def drop(
         self,
         models: List = None,
         excludes: List = None,
