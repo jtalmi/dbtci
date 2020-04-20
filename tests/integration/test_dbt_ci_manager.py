@@ -28,6 +28,9 @@ class DBTIntegrationTest(unittest.TestCase):
         self.child_model_path = os.path.join(
             os.path.dirname(__file__), "models/test_child_model.sql"
         )
+        self.child_model_path = os.path.join(
+            os.path.dirname(__file__), "models/test_macro_model.sql"
+        )        
         self.macro_path = os.path.join(
             os.path.dirname(__file__), "macros/test_macro.sql"
         )
@@ -38,6 +41,9 @@ class DBTIntegrationTest(unittest.TestCase):
         with open(self.child_model_path, "w+") as f:
             f.write("""SELECT * FROM {{ ref('test_model') }}""")
 
+        with open(self.macro_model_path, "w+") as f:
+            f.write("""SELECT {{ test_macro() }}""")
+
         with open(self.macro_path, "w+") as f:
             f.write("""{% macro test_macro() %} SELECT 2 {% endmacro %}""")
 
@@ -45,6 +51,7 @@ class DBTIntegrationTest(unittest.TestCase):
         mock.patch.stopall()
         os.remove(self.model_path)
         os.remove(self.child_model_path)
+        os.remove(self.macro_model_path)
         os.remove(self.macro_path)
 
     def drop_model(self, model_name):
