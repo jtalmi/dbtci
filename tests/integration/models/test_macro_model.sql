@@ -1,1 +1,0 @@
-{{ test_macro() }} AS my_integer_col

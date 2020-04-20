@@ -1,1 +1,0 @@
-SELECT * FROM {{ ref('test_model' }}

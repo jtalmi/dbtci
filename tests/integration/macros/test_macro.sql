@@ -1,1 +1,0 @@
-{% macro test_macro() %} select 2 {% endmacro %}

@@ -110,7 +110,7 @@ class DbtHook:
             if val["depends_on"]["macros"]:
                 for macro in val["depends_on"]["macros"]:
                     macro_child_map.setdefault(macro, {"models": [], "tests": []})
-                    macro_child_map[macro][resouce_type].append(model)
+                    macro_child_map[macro][resource_type].append(model)
         return macro_child_map
 
     def _find_macro_children(self, changed_macros):
