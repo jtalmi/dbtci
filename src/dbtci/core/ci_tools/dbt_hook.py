@@ -183,8 +183,6 @@ class DbtHook:
         )
 
     def drop(self, models: List = []):
-        command = (
-            f"""dbt run-operation drop_models --args \'{"model_name": {models}}\'"""
-        )
+        command = f"""dbt run-operation drop_models --args \'{"models": models}\'"""
         click.secho("Dropping models {}".format(" ".join(models)))
         subprocess.call(command, cwd=self.project_root, shell=True)
