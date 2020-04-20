@@ -18,6 +18,7 @@ DBT_LIST_COMMAND = "dbt ls > /dev/null"
 
 RESOURCE_TYPES = ["model", "test", "seed", "snapshot", "source", "analysis"]
 
+
 class DbtHook:
     """
     Simple wrapper around the dbt CLI. 
