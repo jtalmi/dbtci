@@ -6,7 +6,7 @@ from dbtci.core.ci_tools.dbt_ci_manager import DbtCIManager
 from dbtci.core.ci_tools.utils.git_utils import OBJECT_TYPES
 import subprocess
 
-CHANGED_MODELS_TEMPLATE + {obj: [] for obj in OBJECT_TYPES}
+CHANGED_MODELS_TEMPLATE = {obj: [] for obj in OBJECT_TYPES}
 
 
 class DBTIntegrationTest(unittest.TestCase):
