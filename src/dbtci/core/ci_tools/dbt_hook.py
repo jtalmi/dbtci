@@ -100,7 +100,7 @@ class DbtHook:
 
         return macro_dicts
 
-    def _gemerate_macro_child_map(self):
+    def _generate_macro_child_map(self):
         if not self.manifest:
             self.manifest = self._generate_manifest()
         macro_child_map = {}
