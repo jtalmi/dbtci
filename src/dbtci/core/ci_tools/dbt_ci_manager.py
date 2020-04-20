@@ -34,7 +34,7 @@ class DbtCIManager(DbtHook):
         debug=False,
     ):
         if not self.changed_objects:
-            self.changed_objects = fetch_changed_dbt_objects()
+            self.changed_objects = fetch_changed_dbt_objects(self.project_root)
         models = self.changed_objects.get("model")
 
         if models:

@@ -1,6 +1,7 @@
 import unittest
 import os
 import mock
+from collections import defaultdict
 from dbtci.core.ci_tools.dbt_ci_manager import DbtCIManager
 import subprocess
 
@@ -44,19 +45,22 @@ class DBTIntegrationTest(unittest.TestCase):
         os.remove(self.macro_path)
 
     def test_run_changed_models(self):
-        self.mock_changed_objects.return_value = {"model": ["test_model"]}
+        self.mock_changed_objects.return_value = defaultdict(lambda: [])
+        self.mock_changed_objects.return_value.update(model=["test_model"])
         self.dbt_ci_manager.execute_changed("run", check_macros=False, children=False)
         self.dbt_ci_manager.test(["test_model"])
         self.dbt_ci_manager.drop(["test_model"])
 
     def test_run_changed_models_with_children(self):
-        self.mock_changed_objects.return_value = {"model": ["test_model"]}
+        self.mock_changed_objects.return_value = defaultdict(lambda: [])
+        self.mock_changed_objects.return_value.update(model=["test_model"])
         self.dbt_ci_manager.execute_changed("run", check_macros=False, children=True)
         self.dbt_ci_manager.test(["test_model", "test_child_model"])
         self.dbt_ci_manager.drop(["test_model", "test_child_model"])
 
     def test_run_macro_children(self):
-        self.mock_changed_objects.return_value = {"macros": ["test_macro"]}
+        self.mock_changed_objects.return_value = defaultdict(lambda: [])
+        self.mock_changed_objects.return_value.update(model=["test_macro"])
         self.dbt_ci_manager.execute_changed("run", check_macros=True)
         self.dbt_ci_manager.test(["test_model"])
         self.dbt_ci_manager.drop(["test_model"])

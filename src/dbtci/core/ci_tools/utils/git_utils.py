@@ -12,7 +12,6 @@ MAPPING = {
     "macro": {"subfolder": "macros", "suffix": "sql"},
 }
 
-PROJECT_DIR = "/Users/jonathantalmi/dev/db-analytics/"
 OBJECT_TYPES = ["model", "data_test", "seed", "macro"]
 
 
@@ -32,7 +31,7 @@ def _parse_files(project_dir, object_type, files):
 
 
 def fetch_changed_dbt_objects(
-    object_types=OBJECT_TYPES, project_dir=PROJECT_DIR, compare_branch="master"
+    project_root, object_types=OBJECT_TYPES, compare_branch="master"
 ):
     changed_files = subprocess.check_output(
         ["git", "diff", compare_branch, "--name-only"], cwd=project_dir
