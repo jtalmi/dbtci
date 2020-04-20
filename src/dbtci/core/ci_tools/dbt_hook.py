@@ -100,24 +100,23 @@ class DbtHook:
 
         return macro_dicts
 
-    def _macro_child_map(self):
+    def _gemerate_macro_child_map(self):
         if not self.manifest:
             self.manifest = self._generate_manifest()
-
         macro_child_map = {}
         for resource, val in self.manifest.get("nodes").items():
             resource_type = val.get("resource_type")
             if val["depends_on"]["macros"]:
                 for macro in val["depends_on"]["macros"]:
-                    macro_child_map.setdefault(macro, {"models": [], "tests": []})
+                    macro_child_map.setdefault(macro, {"model": [], "tests": []})
                     macro_child_map[macro][resource_type].append(model)
         return macro_child_map
 
     def _find_macro_children(self, changed_macros):
         remaining_models = set()
-        macro_map = self._macro_child_map()
+        macro_map = self._gemerate_macro_child_map()
         for macro in changed_macros:
-            remaining_models.update(macro_map.get(macro).get("models"))
+            remaining_models.update(macro_map.get(macro).get("model"))
         return remaining_models
 
     def _build_options(

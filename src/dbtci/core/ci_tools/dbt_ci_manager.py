@@ -36,6 +36,7 @@ class DbtCIManager(DbtHook):
         if not self.changed_objects:
             self.changed_objects = fetch_changed_dbt_objects()
         models = self.changed_objects.get("model")
+
         if models:
             click.echo("Changed models: {}".format(" ".join(models)))
 

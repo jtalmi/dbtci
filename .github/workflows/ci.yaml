@@ -11,6 +11,7 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: root
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -41,7 +42,7 @@ jobs:
     - name: Test with pytest
       env:
         CI_DBT_USER: root
-        CI_DBT_PASS: ''
+        CI_DBT_PASS: postgres
         CI_DBT_PORT: 5432
         CI_DBT_DBNAME: dbtci_test
       run: |
