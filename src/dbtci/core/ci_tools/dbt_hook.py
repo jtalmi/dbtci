@@ -121,7 +121,7 @@ class DbtHook:
         macro_map = self._generate_macro_child_map()
         for macro in changed_macros:
             remaining_models.update(macro_map.get(macro).get("model"))
-        return remaining_models
+        return list(remaining_models)
 
     def _build_options(
         self,
