@@ -106,11 +106,14 @@ class DbtHook:
         macro_child_map = {}
         for resource, val in self.manifest.get("nodes").items():
             resource_type = val.get("resource_type")
+            if resource_type not in ["model", "test"]:
+                continue
             model_name = get_resource_name(resource)
             if val["depends_on"]["macros"]:
                 for macro in val["depends_on"]["macros"]:
-                    macro_child_map.setdefault(macro, {"model": [], "test": []})
-                    macro_child_map[macro][resource_type].append(model_name)
+                    macro_name = get_resource_name(macro)
+                    macro_child_map.setdefault(macro_name, {"model": [], "test": []})
+                    macro_child_map[macro_name][resource_type].append(model_name)
         return macro_child_map
 
     def _find_macro_children(self, changed_macros: List):
