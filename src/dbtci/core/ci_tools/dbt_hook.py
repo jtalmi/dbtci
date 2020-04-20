@@ -113,7 +113,7 @@ class DbtHook:
                     macro_child_map[macro][resource_type].append(model_name)
         return macro_child_map
 
-    def _find_macro_children(self, changed_macros):
+    def _find_macro_children(self, changed_macros: List):
         remaining_models = set()
         macro_map = self._gemerate_macro_child_map()
         for macro in changed_macros:
@@ -181,3 +181,10 @@ class DbtHook:
             options=self._build_options(models, excludes, vars),
             debug=debug,
         )
+
+    def drop(self, models: List = []):
+        command = (
+            f"""dbt run-operation drop_models --args \'{"model_name": {models}}\'"""
+        )
+        click.secho("Dropping models {}".format(" ".join(models)))
+        subprocess.call(command, cwd=self.project_root, shell=True)
