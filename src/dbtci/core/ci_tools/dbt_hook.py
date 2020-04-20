@@ -108,7 +108,7 @@ class DbtHook:
             resource_type = val.get("resource_type")
             if val["depends_on"]["macros"]:
                 for macro in val["depends_on"]["macros"]:
-                    macro_child_map.setdefault(macro, {"model": [], "tests": []})
+                    macro_child_map.setdefault(macro, {"model": [], "test": []})
                     macro_child_map[macro][resource_type].append(model)
         return macro_child_map
 

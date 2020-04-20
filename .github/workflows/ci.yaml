@@ -12,6 +12,7 @@ jobs:
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: root
+          POSTGRES_DB: dbtci_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
