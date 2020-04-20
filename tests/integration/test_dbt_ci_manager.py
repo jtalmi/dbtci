@@ -8,6 +8,7 @@ import subprocess
 
 CHANGED_MODELS_TEMPLATE + {obj: [] for obj in OBJECT_TYPES}
 
+
 class DBTIntegrationTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(DBTIntegrationTest, self).__init__(*args, **kwargs)
