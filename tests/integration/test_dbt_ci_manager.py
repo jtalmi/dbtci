@@ -42,7 +42,7 @@ class DBTIntegrationTest(unittest.TestCase):
             f.write("""SELECT * FROM {{ ref('test_model') }}""")
 
         with open(self.macro_model_path, "w+") as f:
-            f.write("""{{ test_macro() }}""")
+            f.write("""{{ test_macro() AS my_integer_col }}""")
 
         with open(self.macro_path, "w+") as f:
             f.write("""{% macro test_macro() %} SELECT 2 {% endmacro %}""")
