@@ -115,7 +115,7 @@ class DbtHook:
 
     def _find_macro_children(self, changed_macros: List):
         remaining_models = set()
-        macro_map = self._gemerate_macro_child_map()
+        macro_map = self._generate_macro_child_map()
         for macro in changed_macros:
             remaining_models.update(macro_map.get(macro).get("model"))
         return remaining_models

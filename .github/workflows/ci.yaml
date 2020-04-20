@@ -53,8 +53,12 @@ jobs:
         mkdir -p models
         dbt deps
         pytest -v --cov-report= --cov dbtci
-        coverage combine .coverage
-        coverage report
-        coverage html
-        pytest tests/integration
-        pytest tests.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        pip install setuptools wheel twine
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
+
