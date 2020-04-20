@@ -11,12 +11,12 @@ class DBTIntegrationTest(unittest.TestCase):
 
     def setUp(self):
         self.dbt_ci_manager = DbtCIManager(
-            # profile="snaptravel-snowflake",
-            # target='dev',
-            # project_root='/Users/jonathantalmi/dev/db-analytics',
-            profile="dbtci_integration_tests",
-            target="postgres",
-            project_root=os.path.dirname(__file__),
+            profile="snaptravel-snowflake",
+            target="dev",
+            project_root="/Users/jonathantalmi/dev/db-analytics",
+            # profile="dbtci_integration_tests",
+            # target="postgres",
+            # project_root=os.path.dirname(__file__),
         )
         self.mock_changed_objects = mock.patch(
             "dbtci.core.ci_tools.dbt_ci_manager.fetch_changed_dbt_objects"
@@ -39,7 +39,7 @@ class DBTIntegrationTest(unittest.TestCase):
             f.write("""SELECT * FROM {{ ref('test_model') }}""")
 
         with open(self.macro_path, "w+") as f:
-            f.write("""{% macro test_macro() %} select 2 {% endmacro %}""")
+            f.write("""{% macro test_macro() %} SELECT 2 {% endmacro %}""")
 
     def tearDown(self):
         mock.patch.stopall()
