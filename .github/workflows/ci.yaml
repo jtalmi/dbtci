@@ -44,6 +44,7 @@ jobs:
       run: |
         mkdir -p ~/.dbt
         cp tests/integration/ci/sample_profiles.yml ~/.dbt/profiles.yml
+        mkdir -p tests/integration/models
         pytest -v --cov-report= --cov dbtci
         coverage combine .coverage
         coverage report
