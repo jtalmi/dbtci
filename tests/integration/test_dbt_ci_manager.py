@@ -60,7 +60,7 @@ class DBTIntegrationTest(unittest.TestCase):
 
     def test_run_macro_children(self):
         self.mock_changed_objects.return_value = defaultdict(lambda: [])
-        self.mock_changed_objects.return_value.update(model=["test_macro"])
+        self.mock_changed_objects.return_value.update(macro=["test_macro"])
         self.dbt_ci_manager.execute_changed("run", check_macros=True)
         self.dbt_ci_manager.test(["test_model"])
         self.dbt_ci_manager.drop(["test_model"])
