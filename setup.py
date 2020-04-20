@@ -21,7 +21,7 @@ setup(
     name="dbtci",
     version="0.1.0",
     author="Jonathan Talmi",
-    author_email="jtalmi.gmail.com",
+    author_email="jtalmi@gmail.com",
     description="CI manager for dbt",
     long_description=long_description,
     long_description_content_type="text/markdown",
