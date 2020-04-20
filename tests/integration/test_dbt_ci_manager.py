@@ -11,12 +11,9 @@ class DBTIntegrationTest(unittest.TestCase):
 
     def setUp(self):
         self.dbt_ci_manager = DbtCIManager(
-            profile="snaptravel-snowflake",
-            target="dev",
-            project_root="/Users/jonathantalmi/dev/db-analytics",
-            # profile="dbtci_integration_tests",
-            # target="postgres",
-            # project_root=os.path.dirname(__file__),
+            profile="dbtci_integration_tests",
+            target="postgres",
+            project_root=os.path.dirname(__file__),
         )
         self.mock_changed_objects = mock.patch(
             "dbtci.core.ci_tools.dbt_ci_manager.fetch_changed_dbt_objects"
